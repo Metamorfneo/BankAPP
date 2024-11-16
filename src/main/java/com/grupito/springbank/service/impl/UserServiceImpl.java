@@ -165,4 +165,60 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public BankResponse transfer(TransferRequest request) {
+        //Cogemos la cuenta para cobrar(Si existe) , comprobamos que
+        // el saldo es suficiente , quitar el dinero , guardar la cantidad y meter el dinero
+
+        boolean isDestinationAccountExists = userRepository.existsByAccountNumber(request.getDestinationAccountNumber());
+        if(!isDestinationAccountExists){
+            return BankResponse.builder()
+                    .responseMessage(AccountUtils.ACCOUNT_NOT_EXISTS_CODE)
+                    .responseCode(AccountUtils.ACCOUNT_NOT_EXISTS_CODE)
+                    .accountInfo(null)
+                    .build();
+        }
+
+        User sourceAccountUser = userRepository.findByAccountNumber(request.getSourceAccountNumber());
+        if (request.getAmount().compareTo(sourceAccountUser.getAccountBalance()) > 0 ){
+            return BankResponse.builder()
+                    .responseCode(AccountUtils.INSUFFICIENT_BALANCE_CODE)
+                    .responseMessage(AccountUtils.INSUFFICIENT_BALANCE_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
+
+        sourceAccountUser.setAccountBalance(sourceAccountUser.getAccountBalance().subtract(request.getAmount()));
+        String sourceUserName = sourceAccountUser.getFirstName() + " " + sourceAccountUser.getLastName();
+        userRepository.save(sourceAccountUser);
+        EmailDetails debitAlert = EmailDetails.builder()
+                .subject("TE HAN QUITAO DINERO")
+                .recipient(sourceAccountUser.getEmail())
+                .messageBody("La suma de " + request.getAmount() + " Unidades de dinero se ha quitado de su cuenta ,  ahora le quedan " +  sourceAccountUser.getAccountBalance() + " unidades de dinero")
+                .build();
+
+        emailService.sendEmailAlert(debitAlert);
+        User destinationAccountUser = userRepository.findByAccountNumber(request.getDestinationAccountNumber());
+
+        destinationAccountUser.setAccountBalance(destinationAccountUser.getAccountBalance().add(request.getAmount()));
+        String recipientUserName = destinationAccountUser.getFirstName() + " " + destinationAccountUser.getLastName();
+        userRepository.save(destinationAccountUser);
+
+        EmailDetails creditAlert = EmailDetails.builder()
+                .subject("DINERICOO")
+                .recipient(sourceAccountUser.getEmail())
+                .messageBody("La suma de " + request.getAmount() + " Unidades de dinero se ha añadido a cuenta por parte de " + sourceUserName + " ahora  tiene " +  sourceAccountUser.getAccountBalance() + " unidades de dinero")
+                .build();
+
+        emailService.sendEmailAlert(debitAlert);
+
+        return BankResponse.builder()
+                .responseCode()
+                .responseMessage()
+                .accountInfo(AccountInfo.builder()
+
+                        .build())
+                .build();
+    }
+
 }
