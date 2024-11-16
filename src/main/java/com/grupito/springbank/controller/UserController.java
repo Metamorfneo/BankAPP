@@ -2,6 +2,7 @@ package com.grupito.springbank.controller;
 
 
 import com.grupito.springbank.dto.BankResponse;
+import com.grupito.springbank.dto.CreditDebitRequest;
 import com.grupito.springbank.dto.EnquiryRequest;
 import com.grupito.springbank.dto.UserRequest;
 import com.grupito.springbank.service.impl.UserService;
@@ -28,5 +29,15 @@ public class UserController {
     @GetMapping("nameEnquiry")
     public String nameEnquiry(@RequestBody EnquiryRequest request) {
         return userService.nameEnquiry(request);
+    }
+
+    @PostMapping("credit")
+    public BankResponse creditAccount(@RequestBody CreditDebitRequest request) {
+        return userService.creditAccount(request);
+    }
+
+    @PostMapping("debit")
+    public BankResponse debitAccount(@RequestBody CreditDebitRequest request) {
+        return userService.debitAccount(request);
     }
 }

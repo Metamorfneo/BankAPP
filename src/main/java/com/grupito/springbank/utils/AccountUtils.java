@@ -14,6 +14,13 @@ public class AccountUtils {
     public static final  String ACCOUNT_NOT_EXISTS_MESSAGE = "La cuenta con el numero dado no existe";
     public static final String ACCOUNT_FOUND_CODE = "004";
     public static final  String ACCOUNT_FOUND_MESSAGE = "La cuenta existe con el numero dado";
+    public static final String ACCOUNT_CREDITED_SUCCES ="005";
+    public static final String ACCOUNT_CREDITED_SUCCESS_MESSAGE ="Se ha transferido de forma correcta";
+    public static final String INSUFFICIENT_BALANCE_CODE = "006";
+    public static final String INSUFFICIENT_BALANCE_MESSAGE ="No hay suficiente dinero(Como siempre)";
+    public static final String ACCOUNT_DEBITED_SUCCES ="007";
+    public static final String ACCOUNT_DEBITED_MESSAGE ="Se ha extraido dinero de forma corercta";
+
 
 
 
