@@ -1,10 +1,7 @@
 package com.grupito.springbank.controller;
 
 
-import com.grupito.springbank.dto.BankResponse;
-import com.grupito.springbank.dto.CreditDebitRequest;
-import com.grupito.springbank.dto.EnquiryRequest;
-import com.grupito.springbank.dto.UserRequest;
+import com.grupito.springbank.dto.*;
 import com.grupito.springbank.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -39,5 +36,10 @@ public class UserController {
     @PostMapping("debit")
     public BankResponse debitAccount(@RequestBody CreditDebitRequest request) {
         return userService.debitAccount(request);
+    }
+
+    @PostMapping("transfer")
+    public BankResponse transfer(@RequestBody TransferRequest request) {
+        return userService.transfer(request);
     }
 }

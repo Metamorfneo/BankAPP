@@ -213,11 +213,9 @@ public class UserServiceImpl implements UserService {
         emailService.sendEmailAlert(debitAlert);
 
         return BankResponse.builder()
-                .responseCode()
-                .responseMessage()
-                .accountInfo(AccountInfo.builder()
-
-                        .build())
+                .responseCode(AccountUtils.TRANSFER_SUCCESFULL_CODE)
+                .responseMessage(AccountUtils.TRANSFER_SUCCESFULL_MESSAGE)
+                .accountInfo(null)
                 .build();
     }
 

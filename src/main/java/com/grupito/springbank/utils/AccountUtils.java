@@ -20,7 +20,8 @@ public class AccountUtils {
     public static final String INSUFFICIENT_BALANCE_MESSAGE ="No hay suficiente dinero(Como siempre)";
     public static final String ACCOUNT_DEBITED_SUCCES ="007";
     public static final String ACCOUNT_DEBITED_MESSAGE ="Se ha extraido dinero de forma corercta";
-
+    public static final String TRANSFER_SUCCESFULL_CODE = "008";
+    public static final String TRANSFER_SUCCESFULL_MESSAGE = "Se ha transferido de forma correcta";
 
 
 
