@@ -201,7 +201,7 @@ public class UserServiceImpl implements UserService {
         User destinationAccountUser = userRepository.findByAccountNumber(request.getDestinationAccountNumber());
 
         destinationAccountUser.setAccountBalance(destinationAccountUser.getAccountBalance().add(request.getAmount()));
-        String recipientUserName = destinationAccountUser.getFirstName() + " " + destinationAccountUser.getLastName();
+        //String recipientUserName = destinationAccountUser.getFirstName() + " " + destinationAccountUser.getLastName();
         userRepository.save(destinationAccountUser);
 
         EmailDetails creditAlert = EmailDetails.builder()
