@@ -1,6 +1,7 @@
 package com.grupito.springbank.service.impl;
 
 
+import com.grupito.springbank.dto.EmailDetails;
 import com.grupito.springbank.entity.Transaction;
 import com.grupito.springbank.entity.User;
 import com.grupito.springbank.repository.TransactionRepository;
@@ -28,6 +29,7 @@ public class BankStatement {
 
     private TransactionRepository transactionRepository;
     private UserRepository userRepository;
+    private EmailService emailService;
     private static final String FILE="";//Buscar como y donde se guardan los documentos
 
 
@@ -118,6 +120,14 @@ public class BankStatement {
 
         document.close();
 
+        EmailDetails emailDetails = EmailDetails.builder()
+                .recipient(user.getEmail())
+                .subject("Info de la cuenta")
+                .messageBody("Aqui tienes tu info bro")
+                .attachement(FILE)
+                .build();
+
+        emailService.sendEmailWithAttachement(emailDetails);
 
         return transactionList;
     }

@@ -4,4 +4,5 @@ import com.grupito.springbank.dto.EmailDetails;
 
 public interface EmailService {
     void sendEmailAlert(EmailDetails emailDetails);
+    void sendEmailWithAttachement(EmailDetails emailDetails);
 }
