@@ -30,7 +30,7 @@ public class BankStatement {
     private TransactionRepository transactionRepository;
     private UserRepository userRepository;
     private EmailService emailService;
-    private static final String FILE="";//Buscar como y donde se guardan los documentos
+    private static final String FILE="~/Desktop/PdfGenerados";//Buscar como y donde se guardan los documentos
 
 
     //Poder hacer una lista de los movimientos dada una fecha y un numero de cuenta

@@ -25,6 +25,11 @@ public class UserController {
     public BankResponse createAccount(@RequestBody UserRequest userRequest) {
         return userService.createAccount(userRequest);
     }
+
+    @PostMapping ("/login")
+    public BankResponse login(@RequestBody LoginDto loginDto) {
+        return userService.login(loginDto);
+    }
     @Operation(
             summary = "Consulta de saldo",
             description = "Damos un numero de cuenta , comprobamos cuanto dinero hay en la cuenta"

@@ -1,11 +1,16 @@
 package com.grupito.springbank.service.impl;
 
+import com.grupito.springbank.config.JwtTokenProvider;
 import com.grupito.springbank.dto.*;
+import com.grupito.springbank.entity.Role;
 import com.grupito.springbank.entity.User;
 import com.grupito.springbank.repository.UserRepository;
 import com.grupito.springbank.utils.AccountUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +32,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
 
     @Override
     public BankResponse createAccount(UserRequest userRequest) {
@@ -54,6 +65,7 @@ public class UserServiceImpl implements UserService {
                 .phoneNumber(userRequest.getPhoneNumber())
                 .alternatePhoneNumber(userRequest.getAlternatePhoneNumber())
                 .status("ACTIVE")
+                .role(Role.valueOf("ROLE_ADMIN"))
                 .build();
 
         User savedUser = userRepository.save(newUser);
@@ -73,6 +85,24 @@ public class UserServiceImpl implements UserService {
                         .accountNumber(savedUser.getAccountNumber())
                         .accountName(savedUser.getFirstName() + " " + savedUser.getLastName() + " " + savedUser.getOtherName())
                         .build())
+                .build();
+    }
+
+    public BankResponse Login(LoginDto loginDto){
+        Authentication authentication = null;
+        authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())
+        );
+
+        EmailDetails loginAlert = EmailDetails.builder()
+                .subject("Has iniciado sesion")
+                .recipient(loginDto.getEmail())
+                .messageBody("Iniciaste sesion en tu cuenta , si no has sido tu , por favor , contacta con tu banco")
+                .build();
+        emailService.sendEmailAlert(loginAlert);
+        return BankResponse.builder()
+                .responseCode("Login Conseguido")
+                .responseMessage(jwtTokenProvider.generateToken(authentication))
                 .build();
     }
 
@@ -252,6 +282,23 @@ public class UserServiceImpl implements UserService {
                 .responseCode(AccountUtils.TRANSFER_SUCCESFULL_CODE)
                 .responseMessage(AccountUtils.TRANSFER_SUCCESFULL_MESSAGE)
                 .accountInfo(null)
+                .build();
+    }
+
+    public BankResponse login(LoginDto loginDto){
+        Authentication authentication = null;
+        authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())
+        );
+        EmailDetails loginAlert = EmailDetails.builder()
+                .subject("Has iniciado sesion")
+                .recipient(loginDto.getEmail())
+                .messageBody("Iniciaste sesion en tu cuenta , si no has sido tu , por favor , contacta con tu banco")
+                .build();
+        emailService.sendEmailAlert(loginAlert);
+        return BankResponse.builder()
+                .responseCode("Login Conseguido")
+                .responseMessage(jwtTokenProvider.generateToken(authentication))
                 .build();
     }
 
