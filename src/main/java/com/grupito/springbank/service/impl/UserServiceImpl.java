@@ -88,24 +88,6 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    public BankResponse Login(LoginDto loginDto){
-        Authentication authentication = null;
-        authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())
-        );
-
-        EmailDetails loginAlert = EmailDetails.builder()
-                .subject("Has iniciado sesion")
-                .recipient(loginDto.getEmail())
-                .messageBody("Iniciaste sesion en tu cuenta , si no has sido tu , por favor , contacta con tu banco")
-                .build();
-        emailService.sendEmailAlert(loginAlert);
-        return BankResponse.builder()
-                .responseCode("Login Conseguido")
-                .responseMessage(jwtTokenProvider.generateToken(authentication))
-                .build();
-    }
-
     @Override
     public BankResponse balanceEnquiry(EnquiryRequest request) {
         //Vemos si el numero de cuenta puesto existe
