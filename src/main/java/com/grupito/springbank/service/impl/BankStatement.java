@@ -30,6 +30,8 @@ public class BankStatement {
     private TransactionRepository transactionRepository;
     private UserRepository userRepository;
     private EmailService emailService;
+
+    //Constante de donde se guardan los PDF generados
     private static final String FILE="~/Desktop/PdfGenerados";//Buscar como y donde se guardan los documentos
 
 
@@ -38,21 +40,37 @@ public class BankStatement {
     //enviar el PDF por email
 
 
+    //Metodo para generar info del banco, crear un PDF y enviarlo via email
     public List<Transaction> generateStatement(String accountNumber, String startDate, String endDate) throws FileNotFoundException, DocumentException {
         LocalDate start = LocalDate.parse(startDate , DateTimeFormatter.ISO_DATE);
         LocalDate end = LocalDate.parse(endDate , DateTimeFormatter.ISO_DATE);
+
+        //Filtramos la transaccion por numero de cuenta y fecha
         List<Transaction> transactionList = transactionRepository.findAll().stream().filter(transaction -> transaction.getAccountNumber().equals(accountNumber))
                 .filter(transaction -> transaction.getCreatedAt().isEqual(start)).filter(transaction -> transaction.getCreatedAt().isEqual(end)).toList();
 
+        //Recogemos info del ususario por el numero de cuenta
         User user = userRepository.findByAccountNumber(accountNumber);
+
+        //Concatenamos los detalles del usuario para crear el nombre completo
         String customerName = user.getFirstName() + " " + user.getLastName() + " " + user.getOtherName();
+
+        //Seteamos el tamaño del fichero a A4
         Rectangle statementSize = PageSize.A4;
         Document document = new Document(statementSize);
         log.info("Seteando tamano del documento");
+
+        //Preparamos un OS para escribrir el PDF en path concreto
         OutputStream outputStream = new FileOutputStream(FILE);
+
+        //Asociamos el documento con el OS
         PdfWriter.getInstance(document, outputStream);
+
+        //Abrimos el documento
         document.open();
 
+
+        //Creamos la tabla para la informacion del banco de una columna
         PdfPTable bankInfoTable = new PdfPTable(1);
         PdfPCell bankName = new PdfPCell(new Phrase("TFG de Samuel"));
         bankName.setBorder(0);
@@ -106,6 +124,8 @@ public class BankStatement {
             transactionTable.addCell(new Phrase(transaction.getStatus()));
         });
 
+
+        //Añadimos la info al documento
         statementInfo.addCell(customerInfo);
         statementInfo.addCell(statement);
         statementInfo.addCell(endDate);
@@ -118,6 +138,7 @@ public class BankStatement {
         document.add(statementInfo);
         document.add(transactionTable);
 
+        //Cerramos el documento
         document.close();
 
         EmailDetails emailDetails = EmailDetails.builder()

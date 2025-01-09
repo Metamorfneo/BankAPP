@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+//Inyecion de LoomBook que genera getter , setter , equals , hascode , y to string
 @Data
 @Builder
 @AllArgsConstructor

@@ -18,15 +18,23 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+//Clase de configuracion de la segurida de Spring
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @AllArgsConstructor
 public class SecurityConfig {
 
+    //Cargamos datos especificos del usuario
     private final UserDetailsService userDetailsService;
+
+    //Manejamos las Request de HTTP para poder manejar las autenticacion.
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+
+    //Utilizamos Bean para marcar el metodo para utilizar inyectado en otra clase
+    //Utilizamos esta clase para code and endcode la contraseña dada por el usuario.
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

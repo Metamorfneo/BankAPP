@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+//Este metodo se utiliza para recoger los datos del usuario en el proceso de autenticacion.
+
 @Service
 @AllArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
