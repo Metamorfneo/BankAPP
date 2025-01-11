@@ -51,6 +51,7 @@ public class UserServiceImpl implements UserService {
                     .accountInfo(null)
                     .build();
         }
+        //Creamos un nuevo usuario
         User newUser = User.builder()
                 .firstName(userRequest.getFirstName())
                 .lastName(userRequest.getLastName())
@@ -58,17 +59,20 @@ public class UserServiceImpl implements UserService {
                 .gender(userRequest.getGender())
                 .address(userRequest.getAddress())
                 .Country(userRequest.getCountry())
-                .accountNumber(AccountUtils.generateAccountNumber())
-                .accountBalance(BigDecimal.ZERO)
+                .accountNumber(AccountUtils.generateAccountNumber())//Generamos un numero de cuenta para el usuario
+                .accountBalance(BigDecimal.ZERO) //Inizializamos la cuenta con 0 euros
                 .email(userRequest.getEmail())
-                .password(passwordEncoder.encode(userRequest.getPassword()))
+                .password(passwordEncoder.encode(userRequest.getPassword())) //Encodeamos la la contraseña
                 .phoneNumber(userRequest.getPhoneNumber())
                 .alternatePhoneNumber(userRequest.getAlternatePhoneNumber())
-                .status("ACTIVE")
-                .role(Role.valueOf("ROLE_ADMIN"))
+                .status("ACTIVE") //Status por defecto del usuario
+                .role(Role.valueOf("ROLE_ADMIN")) //Asignamos el ROL por defecto
                 .build();
 
+        //Guardamos el usuario en la base de datos
         User savedUser = userRepository.save(newUser);
+
+
         //Enviamos la alerta de email
         EmailDetails emailDetails = EmailDetails.builder()
                 .recipient(savedUser.getEmail())
@@ -77,6 +81,8 @@ public class UserServiceImpl implements UserService {
                         "Nombre de la Cuenta" + savedUser.getFirstName() + " " + savedUser.getLastName() + " " + savedUser.getOtherName() + "\n Numero de cuenta: " + savedUser.getAccountNumber())
                 .build();
         emailService.sendEmailAlert(emailDetails);
+
+        //Construimos y devolvemos con los detalles de la cuenta.
         return BankResponse.builder()
                 .responseCode(AccountUtils.ACCOUNT_CREATION_SUCCES)
                 .responseMessage(AccountUtils.ACCOUNT_CREATION_MESSAGE)
@@ -99,6 +105,8 @@ public class UserServiceImpl implements UserService {
                     .accountInfo(null)
                     .build();
         }
+
+        //Recogemos los detalles del usuario y retornamos el balance de la cuenta
         User foundUser = userRepository.findByAccountNumber(request.getAccountNumber());
         return BankResponse.builder()
                 .responseCode(AccountUtils.ACCOUNT_FOUND_CODE)
@@ -113,6 +121,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String nameEnquiry(EnquiryRequest request) {
+        //Checkeamos si la cuenta existe y retornamos el nombre
         boolean isAccountExists = userRepository.existsByAccountNumber(request.getAccountNumber());
         if (!isAccountExists) {
             return AccountUtils.ACCOUNT_NOT_EXISTS_MESSAGE;
